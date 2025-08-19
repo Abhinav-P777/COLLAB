@@ -18,6 +18,7 @@ const LandingPage = () => {
                 <div className="mt-4">
                     <Link to="/register" className="btn btn-primary btn-lg me-3">Register</Link>
                     <Link to="/login" className="btn btn-secondary btn-lg">Login</Link>
+                    <Link to="/Dashboard" className="btn btn-secondary btn-lg">Login</Link>
                 </div>
             </div>
         </div>
