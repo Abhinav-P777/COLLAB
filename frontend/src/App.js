@@ -6,19 +6,23 @@ import Dashboard from './components/Dashboard';
 import Navbar from './components/Navbar';
 import DocumentForm from './components/DocumentForm';
 import DocumentDetails from './components/DocumentDetails';
-import LandingPage from './components/LandingPage';
+import CollabToolLanding from './components/LandingPage';
+import ChatRooms from './components/ChatRooms'; // Add this
+import ChatRoom from './components/ChatRoom';
 
 function App() {
     return (
         <Router>
             <Navbar />
             <Routes>
-                <Route path="/" element={<LandingPage/>} />
+                <Route path="/" element={<CollabToolLanding/>} />
                 <Route path="/login" element={<Login/>} />
                 <Route path="/register" element={<Register/>} />
                 <Route path="/dashboard" element={<Dashboard/>} />
                 <Route path="/document/:id" element={<DocumentDetails/>} />
                 <Route path="/document/new" element={<DocumentForm />} />
+                  <Route path="/chat" element={<ChatRooms />} />       
+                <Route path="/chat/:roomId" element={<ChatRoom />} />
             </Routes>
         </Router>
     );

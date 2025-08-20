@@ -38,7 +38,7 @@ const Login = () => {
                     <label htmlFor="email" className="form-label">Email address</label>
                     <input type="email" className="form-control" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 color:red-300">
                     <label htmlFor="password" className="form-label">Password</label>
                     <input type="password" className="form-control" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 </div>
