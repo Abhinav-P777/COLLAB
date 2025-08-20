@@ -1,56 +1,92 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-    const navigate = useNavigate();
-    const userString = localStorage.getItem('user');
-    const user = userString?JSON.parse(userString):null;
-    console.log(user)
+  const navigate = useNavigate();
+  const userString = localStorage.getItem("user");
+  const user = userString ? JSON.parse(userString) : null;
+  const [isOpen, setIsOpen] = useState(false);
 
-    const handleLogout = () => {
-        // Remove user data from local storage
-        localStorage.removeItem('user');
-        // Redirect to landing page
-        navigate('/');
-    };
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/");
+  };
 
-    return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
-            <div className="container-fluid">
-                <Link className="navbar-brand" to="/dashboard">CollabTool</Link>
-                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
-                </button>
-                <div className="collapse navbar-collapse" id="navbarNav">
-                    <ul className="navbar-nav me-auto">
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/dashboard">Dashboard</Link>
-                        </li>
-                        <li className='nav-item'>
-<Link className="nav-link" to="/chat">Chat Rooms</Link>
-</li>
-                    </ul>
-                    {user ? (
-                        <ul className="navbar-nav">
-                            <li className="nav-item">
-                                <button className="btn btn-link nav-link" onClick={handleLogout}>{user.username}  Logout</button>
-                            </li>
-                        </ul>
-                    ) : (
-                        <ul className="navbar-nav">
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/login">Login</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/register">Register</Link>
-                            </li>
+  return (
+    <nav className="bg-gray-800 shadow-md">
+      <div className="container mx-auto flex justify-between items-center px-4 py-3">
+        {/* Brand */}
+        <Link to="/dashboard" className="text-xl font-bold text-blue-600">
+          CollabTool
+        </Link>
 
-                        </ul>
-                    )}
-                </div>
+        {/* Mobile menu button */}
+        <button
+          className="md:hidden text-gray-600 focus:outline-none"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          ☰
+        </button>
+
+        {/* Links */}
+        <div
+          className={`${
+            isOpen ? "block" : "hidden"
+          } w-full md:flex md:items-center md:w-auto`}
+        >
+          <ul className="flex flex-col md:flex-row md:space-x-6 mt-3 md:mt-0">
+            <li>
+              <Link
+                to="/dashboard"
+                className="block py-2 text-gray-700 hover:text-blue-600"
+              >
+                Dashboard
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/chat"
+                className="block py-2 text-gray-700 hover:text-blue-600"
+              >
+                Chat Rooms
+              </Link>
+            </li>
+          </ul>
+
+          {/* Right side (Auth buttons) */}
+          {user ? (
+            <div className="mt-3 md:mt-0 md:ml-6">
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+              >
+                {user.username} • Logout
+              </button>
             </div>
-        </nav>
-    );
+          ) : (
+            <ul className="flex flex-col md:flex-row md:space-x-6 mt-3 md:mt-0 md:ml-6">
+              <li>
+                <Link
+                  to="/login"
+                  className="block py-2 text-gray-700 hover:text-blue-600"
+                >
+                  Login
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/register"
+                  className="block py-2 text-gray-700 hover:text-blue-600"
+                >
+                  Register
+                </Link>
+              </li>
+            </ul>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
 };
 
 export default Navbar;
