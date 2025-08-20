@@ -9,6 +9,7 @@ import DocumentDetails from './components/DocumentDetails';
 import CollabToolLanding from './components/LandingPage';
 import ChatRooms from './components/ChatRooms';
 import ChatRoom from './components/ChatRoom';
+import DocumentEditor from './components/DocumentEditor';
 
 function AppContent() {
     const location = useLocation();
@@ -19,6 +20,7 @@ function AppContent() {
             {location.pathname !== "/" && <Navbar />}
 
             <Routes>
+                <Route path="/editor/:id" element={<DocumentEditor />} />
                 <Route path="/" element={<CollabToolLanding />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />

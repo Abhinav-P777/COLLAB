@@ -51,6 +51,14 @@ const Navbar = () => {
                 Chat Rooms
               </Link>
             </li>
+            <li>
+              <Link 
+    to={`/editor/${document._id}`} 
+    className="btn btn-primary btn-sm"
+>
+    Open Document
+</Link>
+            </li>
           </ul>
 
           {/* Right side (Auth buttons) */}
