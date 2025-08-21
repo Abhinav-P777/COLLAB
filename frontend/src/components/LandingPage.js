@@ -1,24 +1,22 @@
 import React from "react";
-import bgVideo from "../assets/Untitled video - Made with Clipchamp.mp4"; 
+import bgVideo from "../assets/Untitled video - Made with Clipchamp.mp4";
+import bgImage from "../assets/Header-background (2).webp"
 import { useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
   const navigate = useNavigate();
   return (
     
-    <section className="min-h-screen bg-black text-white flex flex-col justify-center items-center relative overflow-hidden">
+    <section className="min-h-screen bg-white text-black flex flex-col justify-center items-center relative overflow-hidden">
       {/* Background Video */}
-      <div className="absolute inset-0">
-        <video
-          src={bgVideo}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/50"></div>
-      </div>
+    <div className="absolute inset-0">
+  <img
+    src={bgImage}
+    alt="Background"
+    className="w-full h-full object-cover"
+  />
+  <div className="absolute inset-0 "></div>
+</div>
 
       {/* Navbar */}
       <nav className="absolute top-0 w-full flex justify-between items-center px-8 py-6 text-gray-300 z-10">
@@ -31,21 +29,23 @@ export default function LandingPage() {
 
       {/* Hero Content */}
       <div className="text-center max-w-3xl z-10">
-        <span className="bg-gray-800 px-4 py-2 rounded-full text-sm font-libre">
+        <span className="bg-gray-800 px-4 py-2 rounded-full text-sm text-white font-libre">
           ✦ Real-Time Collaboration
         </span>
         <h1 className="text-5xl md:text-6xl font-bold mt-6 font-seenonim">
           Collaboration that you <br /> need Indeed
         </h1>
-        <p className="text-gray-300 mt-6 font-bebas tracking-wide">
-          Write, edit, and collaborate seamlessly with your team in real-time.
-          A distraction-free, intuitive workspace built for modern teams.
-        </p>
-        <div className="flex justify-center gap-6 mt-8">
-          <button onClick={() => navigate("/login")} className="px-6 py-3 rounded-full bg-white text-black font-semibold hover:bg-gray-200 font-sans ">
+     <p className="max-w-2xl mx-auto text-black-300 px-9 py-4 font-bebas tracking-wide rounded-lg">
+  Write, edit, and collaborate seamlessly with your team in real-time.
+  A distraction-free, intuitive workspace built for modern teams.
+</p>
+
+
+        <div className="flex justify-center gap-6 mt-8 z-10">
+          <button onClick={() => navigate("/login")} className="px-6 py-3 rounded-full border border-white bg-white/50 hover:bg-orange-100 hover:text-orange-500 font-sans  ">
             LOGIN
           </button>
-          <button onClick={() => navigate("/register")}className="px-6 py-3 rounded-full border border-white hover:bg-gray-900 font-sans">
+          <button  onClick={() => navigate("/register")}className="px-6 py-3 rounded-full border border-white bg-orange-500/20 hover:bg-white hover:text-orange-500 font-sans z-10">
             REGISTER
           </button>
         </div>
