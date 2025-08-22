@@ -49,17 +49,24 @@ router.post('/register', async (req, res) => {
 
 router.post("/login", async (req, res) => {
     try {
+        console.log("Login request body:", req.body); // Debug line
         const { email, password } = req.body;
 
-        // 1. Check if user exists
+        // Check if user exists
         const user = await User.findOne({ email });
+        console.log("User found:", user); // Debug line
+        console.log("Email being searched:", email); // Debug line
+        
         if (!user) {
             return res.status(400).json({ message: "Invalid email" });
         }
 
         // 2. Check password
         const isMatch = await bcrypt.compare(password, user.password);
+        console.log("Password match result:", isMatch); // Debug line
+        
         if (!isMatch) {
+            console.log("Password comparison failed"); // Debug line
             return res.status(400).json({ message: "Invalid email or password" });
         }
 
@@ -82,5 +89,6 @@ router.post("/login", async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
+
 
 module.exports = router;

@@ -19,10 +19,10 @@ export default function LandingPage() {
 </div>
 
       {/* Navbar */}
-      <nav className="absolute top-0 w-full flex justify-between items-center px-8 py-6 text-gray-300 z-10">
+      <nav className="absolute top-0 w-full flex justify-between items-center px-8 py-6 text-gray-500 z-10">
         <h1 className="text-2xl font-bold font-seenonim">Collabn</h1>
        
-        <button className="px-4 py-2 rounded-full bg-gray-800 hover:bg-gray-700 font-seenonim">
+        <button className="px-4 py-2 rounded-full bg-gray-800 hover:bg-gray-300 font-seenonim">
           Start Free
         </button>
       </nav>
@@ -42,10 +42,10 @@ export default function LandingPage() {
 
 
         <div className="flex justify-center gap-6 mt-8 z-10">
-          <button onClick={() => navigate("/login")} className="px-6 py-3 rounded-full border border-white bg-white/50 hover:bg-orange-100 hover:text-orange-500 font-sans  ">
+          <button onClick={() => navigate("/login")} className="px-6 py-3 rounded-full border border-white bg-white/50 hover:bg-orange-100 hover:text-orange-500 font-libre  ">
             LOGIN
           </button>
-          <button  onClick={() => navigate("/register")}className="px-6 py-3 rounded-full border border-white bg-orange-500/20 hover:bg-white hover:text-orange-500 font-sans z-10">
+          <button  onClick={() => navigate("/register")}className="px-6 py-3 rounded-full border border-white bg-orange-500/20 hover:bg-white hover:text-orange-500 font-libre z-10">
             REGISTER
           </button>
         </div>

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; // snow theme (like docs)
 
 const DocumentForm = () => {
     const [title, setTitle] = useState('');
@@ -18,7 +20,7 @@ const DocumentForm = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            navigate(`/document/${data._id}`,{ state: { message: 'Document created successfully!' } });
+            navigate(`/`,{ state: { message: 'Document created successfully!' } });
         } catch (error) {
             console.error('Failed to create document:', error);
         }
@@ -32,10 +34,30 @@ const DocumentForm = () => {
                     <label htmlFor="title" className="form-label">Title</label>
                     <input type="text" className="form-control" id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
                 </div>
-                <div className="mb-3">
-                    <label htmlFor="content" className="form-label">Content</label>
-                    <textarea className="form-control" id="content" value={content} onChange={(e) => setContent(e.target.value)} required />
-                </div>
+              <div className="mb-3">
+  <label htmlFor="content" className="form-label">Content</label>
+  <ReactQuill
+    theme="snow"
+    value={content}
+    onChange={setContent} // direct setter, no event needed
+    modules={{
+      toolbar: [
+        [{ header: [1, 2, 3, false] }],
+        ["bold", "italic", "underline", "strike"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["link", "image"],
+        ["clean"],
+      ],
+    }}
+    formats={[
+      "header",
+      "bold", "italic", "underline", "strike",
+      "list", "bullet",
+      "link", "image",
+    ]}
+  />
+</div>
+
                 <button type="submit" className="btn btn-primary">Create</button>
             </form>
         </div>

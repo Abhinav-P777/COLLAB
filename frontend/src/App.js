@@ -9,7 +9,7 @@ import DocumentDetails from './components/DocumentDetails';
 import CollabToolLanding from './components/LandingPage';
 
 
-import DocumentEditor from './components/DocumentEditor';
+// import DocumentEditor from './components/DocumentEditor';
 
 function AppContent() {
     const location = useLocation();
@@ -17,10 +17,12 @@ function AppContent() {
     return (
         <>
             {/* Show Navbar on all pages except landing page ("/") */}
-            {location.pathname !== "/" && <Navbar />}
+           {location.pathname !== "/" && 
+ location.pathname !== "/login" && 
+ location.pathname !== "/register" && <Navbar />}
 
             <Routes>
-                <Route path="/editor/:id" element={<DocumentEditor />} />
+              
                 <Route path="/" element={<CollabToolLanding />} />
                 <Route path="/login" element={<Login />} />
 
