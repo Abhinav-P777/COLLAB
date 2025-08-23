@@ -51,7 +51,7 @@ const Register = () => {
       <div className="absolute inset-0 bg-black/50"></div>
 
       {/* Register Card */}
-      <div className="relative w-full max-w-md rounded-2xl shadow-lg p-8 transform transition duration-300 hover:scale-105 font-bebas bg-white/10 backdrop-blur-md">
+      <div className="relative w-full max-w-md rounded-2xl shadow-lg p-8 transform transition duration-300 hover:scale-105 font-LIBRE bg-white/10 backdrop-blur-md">
         <h2 className="text-2xl font-bold text-center mb-6 text-white">Register</h2>
         <form onSubmit={handleRegister} className="space-y-4">
           {/* Username */}
