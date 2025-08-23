@@ -6,6 +6,7 @@ const documentRoutes = require('./routes/documents');
 const cors = require('cors');
 const { Server } = require('socket.io');
 const http = require('http');
+const userRoutes = require('./routes/users');
 
 dotenv.config();
 connectDB();
@@ -31,6 +32,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/documents', documentRoutes);
 // REMOVED: app.use('/api/chat', chatRoutes);
+app.use('/api/users', userRoutes);
 
 io.on('connection', (socket) => {
     console.log('New WebSocket connection');

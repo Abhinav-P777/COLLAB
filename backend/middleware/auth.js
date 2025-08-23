@@ -23,4 +23,6 @@ const verifyToken = (req, res, next) => {
     }
 };
 
-module.exports = { verifyToken };
+// Export both ways for compatibility
+module.exports = verifyToken; // Direct export
+module.exports.verifyToken = verifyToken; // Named export

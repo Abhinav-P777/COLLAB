@@ -1,5 +1,5 @@
 import React from "react";
-import bgVideo from "../assets/Untitled video - Made with Clipchamp.mp4";
+
 import bgImage from "../assets/Header-background (2).webp"
 import { useNavigate } from "react-router-dom";
 
