@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { getDocumentById, updateDocument, deleteDocument } from '../services/documentService';
 import { io } from 'socket.io-client';
@@ -9,9 +9,11 @@ import SimpleNavbar from './SimpleNavbar';
 import ShareDocumentModal from '../components/ShareDocumentModal';
 
 const DocumentDetails = () => {
-  const socket = io('http://localhost:5000');
+  const socketRef = useRef(null);
   const { id } = useParams();
   const navigate = useNavigate();
+  const currentUserRef = useRef(null); // Store current user to avoid stale closure
+  
   const [document, setDocument] = useState(null);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -21,47 +23,106 @@ const DocumentDetails = () => {
   const [lastSaved, setLastSaved] = useState(null);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [sharedUsersCount, setSharedUsersCount] = useState(0);
+  
+  // Online users state
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
   const location = useLocation();
   const message = location.state?.message;
 
+  // Colors for user avatars
+  const userColors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', '#FF9FF3', '#54A0FF', '#5F27CD'];
+
+  const getCurrentUser = () => {
+    const userString = localStorage.getItem('user') || sessionStorage.getItem('user');
+    return userString ? JSON.parse(userString) : null;
+  };
+
+  // Initialize socket for real-time collaboration
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    currentUserRef.current = currentUser; // Store in ref to avoid stale closure
+    
+    if (!currentUser) {
+      navigate('/');
+      return;
+    }
+
+    console.log('🔌 Initializing socket connection...');
+    socketRef.current = io('http://localhost:5000');
+    const socket = socketRef.current;
+
+    socket.on('connect', () => {
+      console.log('✅ Connected to server:', socket.id);
+      socket.emit('joinDocument', { 
+        documentId: id, 
+        userId: currentUser.id,
+        username: currentUser.username || currentUser.email?.split('@')[0] || 'Anonymous'
+      });
+    });
+
+    // Listen for document updates from other users
+    socket.on('receiveUpdate', ({ title: newTitle, content: newContent, userId }) => {
+      console.log('📝 Received document update from user:', userId);
+      
+      // Only update if change came from another user
+      if (userId !== currentUserRef.current?.id) {
+        console.log('📥 Updating local content from remote user');
+        setTitle(newTitle);
+        setContent(newContent);
+        setLastSaved(new Date()); // Update last saved timestamp
+      }
+    });
+
+    // Listen for online users updates
+    socket.on('onlineUsers', (users) => {
+      console.log('👥 Online users updated:', users);
+      setOnlineUsers(users);
+    });
+
+    // Handle connection errors
+    socket.on('connect_error', (error) => {
+      console.error('❌ Socket connection error:', error);
+    });
+
+    socket.on('disconnect', (reason) => {
+      console.log('🔌 Socket disconnected:', reason);
+    });
+
+    return () => {
+      console.log('🔌 Cleaning up socket connection');
+      if (socket) {
+        socket.disconnect();
+      }
+    };
+  }, [id, navigate]);
+
+  // Fetch document data
   useEffect(() => {
     const fetchDocument = async () => {
       try {
+        console.log('📄 Fetching document data...');
         const doc = await getDocumentById(id);
         setDocument(doc);
         setTitle(doc.title);
         setContent(doc.content);
         setLastSaved(new Date(doc.updatedAt || doc.createdAt));
         setSharedUsersCount(doc.sharedWith ? doc.sharedWith.length : 0);
+        console.log('📄 Document loaded successfully');
       } catch (error) {
+        console.error('❌ Failed to fetch document:', error);
         setError('Failed to fetch document');
       }
     };
     fetchDocument();
   }, [id]);
 
-  useEffect(() => {
-    socket.emit('joinDocument', id);
-
-    socket.on('receiveUpdate', (updatedData) => {
-      if (updatedData.title) setTitle(updatedData.title);
-      if (updatedData.content) setContent(updatedData.content);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [id, socket]);
-
   const handleUpdate = async () => {
     setIsLoading(true);
     try {
       await updateDocument(id, { title, content });
-      socket.emit('documentUpdate', { documentId: id, title, content });
       setSuccessMessage('Document updated successfully!');
       setLastSaved(new Date());
-      
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
       setError('Failed to update document');
@@ -83,19 +144,40 @@ const DocumentDetails = () => {
     }
   };
 
-  const handleTitleChange = (e) => {
-    const newTitle = e.target.value;
-    setTitle(newTitle);
-    socket.emit('documentUpdate', { documentId: id, title: newTitle, content });
-  };
+const handleTitleChange = (e) => {
+  const newTitle = e.target.value;
+  setTitle(newTitle);
+  
+  const currentUser = getCurrentUser();
+  console.log('📤 Sending title update with userId:', currentUser?.id);
+  
+  if (socketRef.current && socketRef.current.connected && currentUser?.id) {
+    socketRef.current.emit('documentUpdate', {
+      documentId: id,
+      title: newTitle,
+      content,
+      userId: currentUser.id  // ← Send userId with each update
+    });
+  }
+};
 
-  const handleContentChange = (value) => {
-    setContent(value);
-    socket.emit('documentUpdate', { documentId: id, title, content: value });
-  };
+const handleContentChange = (value) => {
+  setContent(value);
+  
+  const currentUser = getCurrentUser();
+  console.log('📤 Sending content update with userId:', currentUser?.id);
+  
+  if (socketRef.current && socketRef.current.connected && currentUser?.id) {
+    socketRef.current.emit('documentUpdate', {
+      documentId: id,
+      title,
+      content: value,
+      userId: currentUser.id  // ← Send userId with each update
+    });
+  }
+};
 
   const handleShareUpdate = () => {
-    // Refresh shared users count
     const fetchDocument = async () => {
       try {
         const doc = await getDocumentById(id);
@@ -166,6 +248,48 @@ const DocumentDetails = () => {
 
               {/* Right side - Actions and info */}
               <div className="flex items-center space-x-4">
+                {/* Socket Connection Status */}
+                <div className="flex items-center space-x-2">
+                  <div className={`w-2 h-2 rounded-full ${
+                    socketRef.current?.connected ? 'bg-green-500 animate-pulse' : 'bg-red-500'
+                  }`}></div>
+                  <span className="text-xs text-gray-500">
+                    {socketRef.current?.connected ? 'Connected' : 'Disconnected'}
+                  </span>
+                </div>
+
+                {/* Online Users Indicator */}
+                {onlineUsers.length > 0 && (
+                  <div className="flex items-center space-x-3 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <span className="text-sm font-medium text-green-700">Online</span>
+                    </div>
+                    
+                    <div className="flex -space-x-2">
+                      {onlineUsers.slice(0, 5).map((user, index) => (
+                        <div
+                          key={user.socketId}
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold ring-2 ring-white"
+                          style={{ backgroundColor: userColors[index % userColors.length] }}
+                          title={user.username}
+                        >
+                          {user.username.charAt(0).toUpperCase()}
+                        </div>
+                      ))}
+                      {onlineUsers.length > 5 && (
+                        <div className="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-xs font-bold ring-2 ring-white">
+                          +{onlineUsers.length - 5}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <span className="text-sm text-green-700 font-medium">
+                      {onlineUsers.length} editing
+                    </span>
+                  </div>
+                )}
+
                 {lastSaved && (
                   <div className="flex items-center space-x-2 text-sm text-gray-500">
                     <Clock size={16} />
@@ -244,10 +368,17 @@ const DocumentDetails = () => {
                       <span>Shared with {sharedUsersCount} user{sharedUsersCount !== 1 ? 's' : ''}</span>
                     </div>
                   )}
-                  <div className="flex items-center space-x-2">
-                    <Users size={16} />
-                    <span>Collaborative editing enabled</span>
-                  </div>
+                  
+                  {/* Online Status in Document Info */}
+                  {onlineUsers.length > 0 && (
+                    <div className="flex items-center space-x-2 text-green-600">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <span>
+                        {onlineUsers.map(user => user.username).join(', ')} 
+                        {onlineUsers.length === 1 ? ' is' : ' are'} currently editing
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -282,12 +413,17 @@ const DocumentDetails = () => {
                 ]}
               />
             </div>
+            
+            <div className="flex justify-end text-xs px-2 py-2 text-gray-500">
+              Words: {content.replace(/<[^>]*>/g, '').trim().split(/\s+/).filter(Boolean).length} | 
+              Characters: {content.replace(/<[^>]*>/g, '').length}
+            </div>
           </div>
 
           {/* Document Stats */}
           <div className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Document Statistics</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="bg-gray-50 p-4 rounded-lg">
                 <h4 className="font-medium text-gray-800 mb-2">Word Count</h4>
                 <p className="text-2xl font-bold text-gray-900">
@@ -298,6 +434,12 @@ const DocumentDetails = () => {
                 <h4 className="font-medium text-gray-800 mb-2">Character Count</h4>
                 <p className="text-2xl font-bold text-gray-900">
                   {content.replace(/<[^>]*>/g, '').length}
+                </p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h4 className="font-medium text-gray-800 mb-2">Online Users</h4>
+                <p className="text-2xl font-bold text-gray-900">
+                  {onlineUsers.length}
                 </p>
               </div>
               <div className="bg-gray-50 p-4 rounded-lg">

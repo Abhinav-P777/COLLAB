@@ -6,7 +6,10 @@ module.exports = {
       fontFamily: {
         seenonim: ['Seenonim',],
         libre: ['"Libre Caslon Text"', 'serif'],
-        bebas: ['"Bebas Neue"', 'sans-serif'] // Tailwind utility class
+        bebas: ['"Bebas Neue"', 'sans-serif'],
+        cardival: ['Cardival', 'sans-serif'], // Tailwind utility class
+        potterit: ['potteri', 'sans-serif'], // 
+        afigre: ['Afigre', 'sans-serif'], // 
       },
     },
   },

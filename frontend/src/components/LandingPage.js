@@ -19,33 +19,36 @@ export default function LandingPage() {
 </div>
 
       {/* Navbar */}
-      <nav className="absolute top-0 w-full flex justify-between items-center px-8 py-6 text-gray-500 z-10">
-        <h1 className="text-2xl font-bold font-seenonim">Collabn</h1>
+      <nav className="absolute top-0 w-full flex justify-between items-center px-8 py-4 text-gray-500 z-10">
+        <h1 className="text-2xl font-bold font-afigre">Notesphere</h1>
        
-        <button className="px-4 py-2 rounded-full bg-gray-800 hover:bg-gray-300 font-seenonim">
-          Start Free
-        </button>
+        <button
+  onClick={() => navigate("/register")}
+  className="px-6 py-2 rounded-full bg-orange-500 text-white font-semibold shadow-md hover:bg-orange-600 hover:shadow-lg transition font-seenonim"
+>
+  Sign Up
+</button>
       </nav>
 
       {/* Hero Content */}
       <div className="text-center max-w-3xl z-10">
-        <span className="bg-gray-800 px-4 py-2 rounded-full text-sm text-white font-libre">
+        <span className="bg-gray-800 px-4 py-2 rounded-full text-sm text-white font-cardival">
           ✦ Real-Time Collaboration
         </span>
         <h1 className="text-5xl md:text-6xl font-bold mt-6 font-seenonim">
           Collaboration that you <br /> need Indeed
         </h1>
-     <p className="max-w-2xl mx-auto text-black-300 px-9 py-4 font-bebas tracking-wide rounded-lg">
+     <p className="max-w mx-auto text-black-300 px-9 py-4 font-cardival tracking-wide rounded-lg font-bold bg-white/">
   Write, edit, and collaborate seamlessly with your team in real-time.
   A distraction-free, intuitive workspace built for modern teams.
 </p>
 
 
-        <div className="flex justify-center gap-6 mt-8 z-10">
-          <button onClick={() => navigate("/login")} className="px-6 py-3 rounded-full border border-white bg-white/50 hover:bg-orange-100 hover:text-orange-500 font-libre  ">
+        <div className="flex justify-center gap-6 mt-8 z-10 text-white">
+          <button onClick={() => navigate("/login")} className="px-6 py-3 rounded-full border border-white bg-orange-500 hover:bg-orange-600  font-seenonim  ">
             LOGIN
           </button>
-          <button  onClick={() => navigate("/register")}className="px-6 py-3 rounded-full border border-white bg-orange-500/20 hover:bg-white hover:text-orange-500 font-libre z-10">
+          <button  onClick={() => navigate("/register")}className="px-6 py-2 rounded-full border border-white bg-orange-500 hover:bg-orange-600  font-seenonim z-10">
             REGISTER
           </button>
         </div>

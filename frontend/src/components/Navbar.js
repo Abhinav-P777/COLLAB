@@ -61,7 +61,7 @@ const Navbar = ({ onSectionChange = () => {}, onSearchChange = () => {}, searchT
              
             </div>
             {!isCollapsed && (
-              <span className="text-xl font-bold text-gray-800 font-seenonim">NoteSphere</span>
+              <span className="text-xl font-bold text-gray-800 font-potterit">NoteSphere</span>
             )}
           </div>
        
